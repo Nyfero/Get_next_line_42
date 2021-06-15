@@ -20,7 +20,6 @@ int	main()
 	int		gnl;
 	int i = 1;
 
-	line = ft_split("1 ", '1');
 	fd = open("test.txt", O_RDONLY);
 	while ((gnl = get_next_line(fd, line)) > 0)
 	{
