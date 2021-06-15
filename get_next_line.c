@@ -6,7 +6,7 @@
 /*   By: gsap <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/14 08:49:41 by gsap              #+#    #+#             */
-/*   Updated: 2021/06/14 15:17:21 by gsap             ###   ########.fr       */
+/*   Updated: 2021/06/15 09:50:10 by gsap             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,32 +14,23 @@
 
 int	str_new_line(char *str, char **line, int i)
 {
-	char	*tmp;
+	char *tmp;
 
 	tmp = ft_strdup(str);
+	free(str);
 	if (!tmp)
 	{
-		free(str);
+		free(*line);
 		return (-1);
 	}
-	str[i] = 0;
-	*line = ft_strdup(str);
-	if (!(*line))
-	{
-		free(str);
-		free(tmp);
-		return (-1);
-	}
-	free(str);
 	if (tmp[i + 1])
 		str = ft_strdup(&tmp[i + 1]);
+	free(tmp);
 	if (!str)
 	{
 		free(*line);
-		free(tmp);
 		return (-1);
 	}
-	free(tmp);
 	return (1);
 }
 
@@ -103,8 +94,20 @@ int	get_next_line(int fd, char **line)
 		str = ft_strdup("");
 	if (!str)
 		return (-1);
+	if (line)
+		free(line);
+	if (!line)
+		line = (char **)malloc(sizeof(char) * 2);
+	*line = ft_strdup("");
 	i = ft_check_new_line(str);
 	if (i == -1)
 		return (ft_read_file(fd, buf, line, str));
+	str[i] = 0;
+	*line = ft_strdup(str);
+	if (!(*line))
+	{
+		free(str);
+		return (-1);
+	}
 	return (str_new_line(str, line, i));
 }

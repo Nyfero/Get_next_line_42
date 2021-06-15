@@ -11,7 +11,6 @@ int		str_new_line(char *str, char **line, int i);
 int		buf_new_line(char *str, char *buf, char **line, int i);
 int		ft_read_file(int fd, char *buf, char **line, char *str);
 int		ft_last_line(char *str, char **line);
-char 	**ft_split(char const *s, char c);
 //char	*ft_read_line(int fd, char **line, char *buf, char *str);
 //char	*ft_eof(char *buf, char *str, char **line);
 //char	*ft_next_line(int i, char *buf, char *str, char **line);
