@@ -6,108 +6,127 @@
 /*   By: gsap <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/14 08:49:41 by gsap              #+#    #+#             */
-/*   Updated: 2021/06/15 09:50:10 by gsap             ###   ########.fr       */
+/*   Updated: 2021/06/17 11:12:20 by gsap             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int	str_new_line(char *str, char **line, int i)
+int	str_new_line(char *str, char **line)
 {
-	char *tmp;
+	int		j;
+	int		i;
+	char	*nw;
 
-	tmp = ft_strdup(str);
-	free(str);
-	if (!tmp)
-	{
-		free(*line);
+	nw = NULL;
+	i = -1;
+	j = 0;
+	while (str[++i] != '\n')
+		nw[i] = str[i];
+	nw[i] = 0;
+	i++;
+	while (str[i])
+		str[j++] = str[i++];
+	str[j] = 0;
+	*line = ft_strdup(nw);
+	if (!(*line))
 		return (-1);
-	}
-	if (tmp[i + 1])
-		str = ft_strdup(&tmp[i + 1]);
-	free(tmp);
-	if (!str)
-	{
-		free(*line);
-		return (-1);
-	}
 	return (1);
 }
 
-int	buf_new_line(char *str, char *buf, char **line, int i)
+int	buf_new_line(char **tmp, char *buf, char **line, int i)
 {
 	buf[i] = 0;
-	str = ft_strjoin(str, buf);
-	if (!str)
+	*tmp = ft_strjoin(*tmp, buf);
+	if (!*tmp)
 		return (-1);
-	*line = ft_strdup(str);
+	*line = ft_strdup(*tmp);
+	free(*tmp);
 	if (!(*line))
 		return (-1);
-	free(str);
-	str = ft_strdup(&buf[i + 1]);
-	if (!str)
+	*tmp = ft_strdup(&buf[i + 1]);
+	if (!*tmp)
+	{
+		free(*line);
 		return (-1);
-	free(buf);
+	}
 	return (1);
 }
 
-int	ft_last_line(char *str, char **line)
+int	ft_read_file(int fd, char *buf, char **line, char **tmp)
 {
-	if (!str)
-		return (-1);
-	*line = ft_strdup(str);
-	if (!(*line))
-		return (-1);
-	free(str);
-	return (0);
-}
-
-int	ft_read_file(int fd, char *buf, char **line, char *str)
-{
-	int			i;
 	long int	rd;
 
 	rd = read(fd, buf, BUFFER_SIZE);
 	buf[rd] = 0;
-	while (ft_check_new_line(buf) == -1)
+	while (rd > 0 && (ft_check_new_line(buf) == -1))
+	{
+		*tmp = ft_strjoin(*tmp, buf);
+		if (!*tmp)
+			return (-1);
+		rd = read(fd, buf, BUFFER_SIZE);
+		buf[rd] = 0;
+	}
+	if (rd < BUFFER_SIZE)
 	{
 		buf[rd] = 0;
-		str = ft_strjoin(str, buf);
-		if (rd == 0)
-			return (ft_last_line(str, line));
-		rd = read(fd, buf, BUFFER_SIZE);
+		*tmp = ft_strjoin(*tmp, buf);
+		*line = *tmp;
+		if (!(*line))
+			return (-1);
+		return (0);
 	}
-	i = ft_check_new_line(buf);
-	buf = ft_strdup(buf);
-	return (buf_new_line(str, buf, line, i));
+	return (buf_new_line(tmp, buf, line, ft_check_new_line(buf)));
+}
+
+int	ft_last_ft(char *tmp, char *str, int i, char **line)
+{
+	int	j;
+
+	j = -1;
+	if (i == -1)
+	{
+		free(*line);
+		free(tmp);
+		return (-1);
+	}
+	if (i != 0)
+	{
+		while (tmp[++j])
+			str[j] = tmp[j];
+		str[j] = 0;
+		free(tmp);
+	}
+	return (i);
 }
 
 int	get_next_line(int fd, char **line)
 {
 	int			i;
+	char		*tmp;
 	char		buf[BUFFER_SIZE + 1];
-	static char	*str;
+	static char	str[BUFFER_SIZE];
 
-	if (BUFFER_SIZE < 0 || (read(fd, buf, 0) == -1))
+	if (BUFFER_SIZE < 1 || (read(fd, buf, 0) == -1))
 		return (-1);
-	if (!str)
-		str = ft_strdup("");
-	if (!str)
-		return (-1);
-	if (line)
-		free(line);
-	if (!line)
-		line = (char **)malloc(sizeof(char) * 2);
-	*line = ft_strdup("");
-	i = ft_check_new_line(str);
-	if (i == -1)
-		return (ft_read_file(fd, buf, line, str));
-	str[i] = 0;
-	*line = ft_strdup(str);
-	if (!(*line))
+	printf("1\n");
+	tmp = NULL;
+	if (str[0] != 0)
 	{
-		free(str);
-		return (-1);
+		i = 0;
+		if (ft_check_new_line(str) == -1)
+		{
+			tmp = ft_strdup(str);
+			while (str[i])
+				str[i++] = 0;
+		}
+		else
+			return (str_new_line(str, line));
 	}
-	return (str_new_line(str, line, i));
+	if (!tmp)
+		tmp = ft_strdup("");
+	if (!tmp)
+		return (-1);
+	i = ft_read_file(fd, buf, line, &tmp);
+	return (ft_last_ft(tmp, str, i, line));
 }
