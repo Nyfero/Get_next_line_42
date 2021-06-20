@@ -10,26 +10,29 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 int	ft_last_line(char **line, char *buf, char **tmp)
 {
-	if (ft_check_new_line(buf) != -1)
-		buf[ft_check_new_line(buf)] = 0;
+	int	index_new_line;
+
+	index_new_line = ft_check_new_line(buf);
+	if (index_new_line != -1)
+		buf[index_new_line] = 0;
 	*line = ft_strjoin(*tmp, buf);
-	if (!(*line))
+	if(!(*line))
 		return (-1);
 	return (0);
 }
 
-int	ft_check_new_line(char *buf)
+int	ft_check_new_line(char *s)
 {
 	int	i;
 
 	i = 0;
-	while (buf[i])
+	while (s[i])
 	{
-		if (buf[i] == '\n')
+		if (s[i] == '\n')
 			return (i);
 		i++;
 	}
@@ -40,7 +43,7 @@ char	*ft_strjoin(char *s1, char *s2)
 {
 	int		len_s1;
 	int		len_s2;
-	int		i;
+	int		compt;
 	char	*strcopie;
 
 	if (!s1 || !s2)
@@ -50,15 +53,15 @@ char	*ft_strjoin(char *s1, char *s2)
 	strcopie = (char *)malloc(sizeof(char) * (len_s1 + len_s2 + 1));
 	if (!strcopie)
 		return (NULL);
-	i = -1;
-	while (++i < len_s1)
-		strcopie[i] = s1[i];
-	while ((i - len_s1) < len_s2)
+	compt = -1;
+	while (++compt < len_s1)
+		strcopie[compt] = s1[compt];
+	while ((compt - len_s1) < len_s2)
 	{
-		strcopie[i] = s2[(i - len_s1)];
-		i++;
+		strcopie[compt] = s2[(compt - len_s1)];
+		compt++;
 	}
-	strcopie[i] = 0;
+	strcopie[compt] = 0;
 	free(s1);
 	return (strcopie);
 }
@@ -76,17 +79,17 @@ int	ft_strlen(const char *s)
 char	*ft_strdup(const char *s1)
 {
 	char	*dest;
-	size_t	i;
+	size_t	compt;
 
 	dest = (char *)malloc(sizeof(char) * (ft_strlen(s1) + 1));
 	if (!dest)
 		return (NULL);
-	i = 0;
-	while (s1[i])
+	compt = 0;
+	while (s1[compt])
 	{
-		dest[i] = s1[i];
-		i++;
+		dest[compt] = s1[compt];
+		compt++;
 	}
-	dest[i] = 0;
+	dest[compt] = 0;
 	return (dest);
 }
