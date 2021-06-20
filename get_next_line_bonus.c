@@ -6,7 +6,7 @@
 /*   By: gsap <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/14 08:49:41 by gsap              #+#    #+#             */
-/*   Updated: 2021/06/20 12:20:06 by gsap             ###   ########.fr       */
+/*   Updated: 2021/06/20 14:04:51 by gsap             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,13 +36,13 @@ int	ft_stat_new_line(char *stat, char **line)
 	return (1);
 }
 
-int	ft_create_new_line(char **tmp, char *buf, char **line, int index_new_line)
+int	ft_create_new_line(char **tmp, char *buf, char **line, int i)
 {
-	buf[index_new_line] = 0;
+	buf[i] = 0;
 	*line = ft_strjoin(*tmp, buf);
 	if (!(*line))
 		return (-1);
-	*tmp = ft_strdup(&buf[index_new_line + 1]);
+	*tmp = ft_strdup(&buf[i + 1]);
 	if (!*tmp)
 	{
 		free(*line);

@@ -20,7 +20,7 @@ int	ft_last_line(char **line, char *buf, char **tmp)
 	if (index_new_line != -1)
 		buf[index_new_line] = 0;
 	*line = ft_strjoin(*tmp, buf);
-	if(!(*line))
+	if (!(*line))
 		return (-1);
 	return (0);
 }
