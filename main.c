@@ -23,7 +23,7 @@ int	main()
 	fd = open("test.txt", O_RDONLY);
 	while ((gnl = get_next_line(fd, line)) > 0)
 	{
-		printf("ligne %d -->%s\n", i, *line);
+		printf("ligne %d -->%s\n", i, line);
 		free(line);
 		i++;
 	}
